@@ -1,0 +1,114 @@
+{load_file("nrngui.hoc")}
+objectvar save_window_, rvp_
+objectvar scene_vector_[6]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,5,-150,0)
+scene_vector_[2] = save_window_
+{save_window_.view(0, -150, 5, 150, 461, 24, 300.48, 200.32)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addvar("s[0].v( 0.5 )", 1, 1, 0.573163, 0.799361, 2)
+}
+{
+xpanel("RunControl", 0)
+v_init = -65
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 5
+xvalue("t","t", 2 )
+tstop = 5
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.025
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+screen_update_invl = 0.05
+xvalue("Scrn update invl","screen_update_invl", 1,"", 0, 1 )
+realtime = 0.00999999
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(166,141)
+}
+
+//Begin VariableTimeStep
+{
+ocbox_ = NumericalMethodPanel[0]
+}
+{object_push(ocbox_)}
+{
+atol_ = 1e-05  CVode[0].atol(atol_)
+restore(301, 1)
+}
+{object_pop()}
+{
+ocbox_.map("VariableTimeStep", 458, 310, 264.96, 113.28)
+}
+objref ocbox_
+//End VariableTimeStep
+
+{
+save_window_ = new Graph(0)
+save_window_.size(0,5,-150,0)
+scene_vector_[3] = save_window_
+{save_window_.view(0, -150, 5, 150, 1084, 30, 300.48, 200.32)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addvar("s[1].v( 0.5 )", 1, 1, 0.51246, 0.61246, 2)
+}
+{
+xpanel("s[0](0 - 1) (Parameters)", 0)
+xlabel("s[0](0 - 1) (Parameters)")
+xlabel("nseg = 1")
+s[0].L = 10
+xvalue("L","s[0].L", 1,"define_shape()", 0, 0 )
+s[0].Ra = 1e+06
+xvalue("Ra","s[0].Ra", 1,"s[0].Ra += 0", 0, 1 )
+s[0].diam = 10
+xvalue("diam","s[0].diam", 1,"", 0, 0 )
+s[0].cm = 1
+xvalue("cm","s[0].cm", 1,"", 0, 0 )
+s[0].c1_dcdt = 1
+xvalue("c1_dcdt","s[0].c1_dcdt", 1,"", 0, 0 )
+s[0].c2_dcdt = 0.5
+xvalue("c2_dcdt","s[0].c2_dcdt", 1,"", 0, 0 )
+s[0].w_dcdt = 1
+xvalue("w_dcdt","s[0].w_dcdt", 1,"", 0, 0 )
+s[0].tbegin_dcdt = 1
+xvalue("tbegin_dcdt","s[0].tbegin_dcdt", 1,"", 0, 0 )
+s[0].tdur_dcdt = 2.75
+xvalue("tdur_dcdt","s[0].tdur_dcdt", 1,"", 0, 0 )
+s[0].dc_dcdt = 0
+xvalue("dc_dcdt","s[0].dc_dcdt", 1,"", 0, 0 )
+xpanel(788,50)
+}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,5,-130.001,-129.959)
+scene_vector_[4] = save_window_
+{save_window_.view(0, -130.001, 5, 0.0420074, 492, 529, 565.44, 239.68)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addexpr("s[0].cm*s[0].v + s[1].cm*s[1].v", 1, 1, 0.378947, 0.859947, 2)
+}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,5,0.5,1.5)
+scene_vector_[5] = save_window_
+{save_window_.view(0, 0.5, 5, 1, 158, 567, 300.48, 200.32)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addvar("s[0].cm( 0.5 )", 1, 1, 0.694569, 0.832907, 2)
+}
+save_window_ = scene_vector_[4]
+{save_window_.view(0, -191, 5, 62, 1101, 526, 405.12, 239.68)}
+objectvar scene_vector_[1]
+{doNotify()}
