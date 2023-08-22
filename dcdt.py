@@ -19,12 +19,14 @@ def model():
         s.cm = 1
     s = ss[0]
     ss[1].connect(s(1.0))
-    s.insert("dcdt")
-    s(0.5).dcdt._ref_c = s(0.5)._ref_cm
+    # s.insert("dcdt")
+    # s(0.5).dcdt._ref_c = s(0.5)._ref_cm
+    cp = h.DcDt(s(0.5))
+    cp._ref_c = s(0.5)._ref_cm
 
-    return ss
+    return ss, cp
 
 
 m = model()
 
-h.load_file("dcdt.ses")
+h.load_file("dcdt_pp.ses")

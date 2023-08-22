@@ -5,16 +5,19 @@
 : via a POINTER to the compartment cm (set up in hoc) where the c pointer
 : is assigned a value in the BEFORE BREAKPOINT block.  The effect of
 : the (dc/dt * v) term is accomplished in the BREAKPOINT block.
+: This is a POINT_PROCESS to allow charge conservation q=c*v across a
+: discontinuity in c
 
 UNITS {
-  (mA) = (milliamp)
+  (nA) = (nanoamp)
   (mV) = (millivolt)
   (uF) = (microfarad)
+  (um) = (micron)
   PI = (pi) (1)
 }
 
 NEURON {
-  SUFFIX dcdt
+  POINT_PROCESS DcDt
   THREADSAFE
   RANGE c1, c2, w, tbegin, tdur, dc
   POINTER c
@@ -32,8 +35,9 @@ PARAMETER {
  
 ASSIGNED {
   c (uF/cm2)
-  i (mA/cm2)
+  i (nA)
   v (mV)
+  area (um2)
 }
  
 FUNCTION cm(t(ms)) (uF/cm2) {
@@ -54,6 +58,7 @@ FUNCTION dcmdt(t(ms))(uF/cm2-ms) {
 
 INITIAL {
   dc = 0
+  net_send(tbegin, 1)
 }
 
 BEFORE BREAKPOINT {
@@ -62,8 +67,23 @@ BEFORE BREAKPOINT {
 }
 
 BREAKPOINT {
-  at_time(tbegin)
-  at_time(tbegin + tdur)
-  
-  i = dc*v*(0.001)
+  i = dc*v*area*(1e-5)
 }
+
+NET_RECEIVE(w) {
+  LOCAL qbefore, cafter, epsilon, tt
+  epsilon = 1e-10 (ms)
+  if (flag == 1) { : turn on stim
+    tt = tbegin
+    qbefore = cm(tt - epsilon)*v : charge prior to discontinuity
+    cafter = cm(tt + epsilon) : capacitance after discontinuity
+    v = qbefore/cafter
+    net_send(tdur, 2)
+  } else if (flag == 2) { : turn off stim
+    tt = tbegin + tdur
+    qbefore = cm(tt - epsilon)*v : charge prior to discontinuity
+    cafter = cm(tt + epsilon) : capacitance after discontinuity
+    v = qbefore/cafter
+  }
+}
+
