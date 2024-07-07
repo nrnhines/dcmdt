@@ -1,0 +1,18 @@
+nrnivmodl
+
+# cm(t) forcing function built-in to dcdt.mod (SUFFIX dcdt)
+# charge conservation at discontinuites via FInitializeHandler
+python -i dcdt.py
+
+# cm(t) forcing function built-in to dcdt_pp.mod (POINT_PROCESS DcDt)
+# charge conservation at discontinuities via NET_RECEIVE
+python -i dcdt_pp.py
+
+# cm(t) forcing function defined in dcdt_play.py
+# Vector.play into segment.cm and Vector.play into segment.dcdtplay.dc
+# charge conservation via FInitializeHandler
+python -i dcdt_play.py
+
+# The capacitance forcing functions are a constraint. Where the
+# energy comes from that is required to satisfy the constraint is not
+# a part of, or calculated by, this model.
